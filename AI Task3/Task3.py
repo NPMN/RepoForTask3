@@ -43,13 +43,13 @@ class Centroid(object):
     def SetCentroidPosY(self,y):
         self.y=y
 
+# if ObjList is None:
+#             ObjList=[]
+#         else:
 class Cluster(object):
-    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=None,ActiveFlag=True):
+    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=[],ActiveFlag=True):
         self.clusterid=clusterid
-        if ObjList is None:
-            ObjList=[]
-        else:
-            self.ObjList=ObjList
+        self.ObjList=ObjList
         self.PosX=ClusterPosX
         self.PosY=ClusterPosY
         self.Flag=ActiveFlag
@@ -102,7 +102,7 @@ def CreateClusters(NumberOfClusters):
     for CentroidPos in Centroid.CentroidsPosition:
         CentroidTempList=[]
         CentroidTempList=CentroidPos
-        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],None,True)
+        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],[],True)
         ClusterList.append(ClusterObject)
         NumberOfClusters-=1
         CentroidTempList.clear()
@@ -114,7 +114,7 @@ def CreateClusters(NumberOfClusters):
 
 
 
-def Distance(CentroidPosX,CentroidPosY,CasePosX,CaseposY):
+def Distance(CentroidPosX=0,CentroidPosY=0,CasePosX=0,CaseposY=0):
 
     return math.sqrt(math.pow((CentroidPosY-CaseposY),2) + math.pow((CentroidPosX-CasePosX),2))
 
@@ -124,12 +124,24 @@ def AssignCasesToCentroids():
     GuideLineDistance=0
     DistanceList=[]
     distance=0
-    for case in CasesFromDatabaseList:
+    Cases_List=[]
+    Cases_List=deepcopy(CasesFromDatabaseList)
+    for case in Cases_List:
         obj=[]
         obj=case
         for clust in ClusterList:
-            distance=Distance(clust.GetClusterPosX(),clust.GetClusterPosY(),obj.get_price(),obj.get_quality())
+            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
             DistanceList.append(distance)
+            DistanceList.sort()
+            GuideLineDistance=DistanceList[0]
+        for clust in ClusterList:
+            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
+            if(GuideLineDistance==distance):
+                clust.ObjList.append(case)#Något är fel här
+                Cases_List.remove(case)
+                DistanceList[0].remove()
+             
+            #if():
 #AssignCasesToCentroids
 #Reassign
 #Perform K-means
@@ -146,5 +158,6 @@ def main():
     InitialPositionsFromCase_Db()   #Klar
     print()
     CreateClusters(N)
+    AssignCasesToCentroids()
 if __name__=='__main__':
     main()
