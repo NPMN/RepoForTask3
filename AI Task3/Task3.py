@@ -126,7 +126,7 @@ def AssignCasesToCentroids():
     distance=0
     Cases_List=[]
     Cases_List=deepcopy(CasesFromDatabaseList)
-    for case in Cases_List:
+    for case in reversed(Cases_List):
         obj=[]
         obj=case
         for clust in ClusterList:
@@ -137,11 +137,19 @@ def AssignCasesToCentroids():
         for clust in ClusterList:
             distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
             if(GuideLineDistance==distance):
-                clust.ObjList.append(case)#Något är fel här
+                clust.ObjList.append(case)
                 Cases_List.remove(case)
-                DistanceList[0].remove()
+                DistanceList.clear()
+                GuideLineDistance=0
+                distance=0
+                del obj
+                del case
+                break
+               
+    return ClusterList            
+                
              
-            #if():
+            
 #AssignCasesToCentroids
 #Reassign
 #Perform K-means
