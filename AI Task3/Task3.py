@@ -60,7 +60,11 @@ class Cluster(object):
     def GetClusterPosX(self):
         return self.PosX
     def GetClusterPosY(self):
-        return self.PosY        
+        return self.PosY
+    def SetClusterPosX(self,ClusterPosX):
+        self.PosX=ClusterPosX
+    def SetClusterPosY(self,ClusterPosY):
+        self.PosY=ClusterPosY            
 
 def InitialCentroidPosition(NumberOfCentroids):
 
@@ -150,9 +154,23 @@ def AssignCasesToCentroids():
                 
              
             
-def ReassignClusters():
+def ReCalculateCentroids():
+
+        for clust in ClusterList:
+            TotalX=0
+            TotalY=0
+            TotalInClusters=0
+            for cases in clust.ObjList:
+                obj=[]
+                obj=cases
+                TotalX+=obj[3]
+                TotalY+=obj[4]
+                TotalInClusters+=1
+            clust.
+            
+      
     
-#Reassign
+#Recalculate centrioid och reassign cases
 #Perform K-means
 #Results
 
@@ -168,5 +186,7 @@ def main():
     print()
     CreateClusters(N)
     AssignCasesToCentroids()
+    print()
+    ReCalculateCentroids()
 if __name__=='__main__':
     main()
