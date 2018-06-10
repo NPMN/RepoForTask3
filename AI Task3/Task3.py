@@ -150,7 +150,8 @@ def AssignCasesToCentroids():
                 
              
             
-#AssignCasesToCentroids
+def ReassignClusters():
+    
 #Reassign
 #Perform K-means
 #Results
