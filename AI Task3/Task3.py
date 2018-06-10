@@ -128,8 +128,8 @@ def AssignCasesToCentroids():
         obj=[]
         obj=case
         for clust in ClusterList:
-            distance=Distance()
-
+            distance=Distance(clust.GetClusterPosX(),clust.GetClusterPosY(),obj.get_price(),obj.get_quality())
+            DistanceList.append(distance)
 #AssignCasesToCentroids
 #Reassign
 #Perform K-means
