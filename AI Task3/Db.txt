@@ -1,0 +1,5 @@
+Name,Type,Nationality,Quality,Price
+Saigon,Fast food,Asian,3,3
+Mcdonalds,Fast Food,American,3,2
+Texas LongHorn,Courmet,American,4,4
+Levels,Courmet,Swedish,3,3
