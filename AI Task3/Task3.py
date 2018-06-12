@@ -159,24 +159,21 @@ def ReCalculateCentroids():
     for clust in ClusterList:
         TotalX=0
         TotalY=0
-        TotalInClusters=0
-        for cases in clust.ObjList:
-            obj=[]
-            obj=cases
-          
+        TotalInCluster=0
 
-            # TotalX+=0
-            # TotalY+=0
-            # TotalInClusters+=1
-
-    #     if(TotalInClusters>0):    
-    #         clust.SetClusterPosX((TotalX/TotalInClusters))
-    #         clust.SetClusterPosY((TotalY/TotalInClusters))
-      
-    # return ClusterList 
+        for case in clust.ObjList:
+            for diffcase in CasesFromDatabaseList:
+                if(case==diffcase):
+                    TotalX+=int(diffcase.get_price())
+                    TotalY+=int(diffcase.get_quality())
+                    TotalInCluster+=1
+        if(TotalInCluster>0):
+            clust.SetClusterPosX(TotalX/TotalInCluster)
+            clust.SetClusterPosY(TotalY/TotalInCluster)       
+    return ClusterList 
 
 def Reassign_Cluster():
-    print("random")    
+    ActiveMovement=0   
 #Recalculate centrioid och reassign cases
 #Perform K-means
 #Results
