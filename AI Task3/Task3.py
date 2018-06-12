@@ -47,7 +47,7 @@ class Centroid(object):
 #             ObjList=[]
 #         else:
 class Cluster(object):
-    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=[],ActiveFlag=True):
+    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=[],ActiveFlag=False):
         self.clusterid=clusterid
         self.ObjList=ObjList
         self.PosX=ClusterPosX
@@ -83,30 +83,18 @@ def InitialCentroidPosition(NumberOfCentroids):
         NumberOfCentroids= NumberOfCentroids - 1
     return Centroid.CentroidsPosition
 
-def InitialPositionsFromCase_Db():
+def ReadFileIntoCaseList():
 
     ReadFile()
-    for obj in CasesFromDatabaseList:   #Denna listan har alla cases
-        TempList=[]
-        TempList=obj
-        
-        X=int(TempList.get_price())
-        Y=int(TempList.get_quality())
-
-        PositionList=[X,Y]
-        QualityAndPriceFromCasesList.append(PositionList)   #Denna listan innehåller price och quality från alla cases, till för kalkylationen med distance
-
-    for i in QualityAndPriceFromCasesList:
-        print(i)  
-    return QualityAndPriceFromCasesList
-
+   
+    return CasesFromDatabaseList
 
 def CreateClusters(NumberOfClusters):
     #clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=None,ActiveFlag=True
     for CentroidPos in Centroid.CentroidsPosition:
         CentroidTempList=[]
         CentroidTempList=CentroidPos
-        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],[],True)
+        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],[],False)
         ClusterList.append(ClusterObject)
         NumberOfClusters-=1
         CentroidTempList.clear()
@@ -172,9 +160,29 @@ def ReCalculateCentroids():
             clust.SetClusterPosY(TotalY/TotalInCluster)       
     return ClusterList 
 
-def Reassign_Cluster():
-    ActiveMovement=0   
-#Recalculate centrioid och reassign cases
+def Reassign_Cluster(NumberOfCentroids):
+    ActiveMovement=0
+    counter=0
+    CopyClusterList=[]
+    CopyClusterList=deepcopy(ClusterList)
+    
+    for clust in ClusterList:   #Gör alla clusters listor tomma
+        clust.ObjList.clear()
+        counter+=1
+    if(counter>=NumberOfCentroids):
+        AssignCasesToCentroids()
+        for clustObj in ClusterList:
+            for CopyCluster in CopyClusterList:
+                if(clustObj.ObjList==CopyCluster.ObjList):
+                    print("Hello")
+                else:
+                    print("NO!!!")    
+                
+
+    
+    
+
+#Reassign cases
 #Perform K-means
 #Results
 
@@ -186,11 +194,13 @@ def main():
     N=3
     InitialCentroidPosition(N) #Klar
     print()
-    InitialPositionsFromCase_Db()   #Klar
+    ReadFileIntoCaseList()   #Klar
     print()
     CreateClusters(N)
     AssignCasesToCentroids()
     print()
     ReCalculateCentroids()
+    print()
+    Reassign_Cluster(N)
 if __name__=='__main__':
     main()

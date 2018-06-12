@@ -1,4 +1,4 @@
-Saigon;Fastfood;Asian;3;3
-Mcdonalds;Fastfood;American;3;2
-Texas LongHorn;Gourmet;American;4;4
-Levels;Gourmet;Swedish;3;3
+Saigon;Fastfood;Asian;4;4
+Mcdonalds;Fastfood;American;3;3
+Texas LongHorn;Gourmet;American;2;2
+Levels;Gourmet;Swedish;1;1
