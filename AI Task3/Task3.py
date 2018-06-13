@@ -47,7 +47,7 @@ class Centroid(object):
 #             ObjList=[]
 #         else:
 class Cluster(object):
-    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=[],ActiveFlag=False):
+    def __init__(self,clusterid=0,ClusterPosX=deepcopy(Centroid().GetCentroidPosX()),ClusterPosY=deepcopy(Centroid().GetCentroidPosY()),ObjList=[],ActiveFlag=True):
         self.clusterid=clusterid
         self.ObjList=ObjList
         self.PosX=ClusterPosX
@@ -94,7 +94,7 @@ def CreateClusters(NumberOfClusters):
     for CentroidPos in Centroid.CentroidsPosition:
         CentroidTempList=[]
         CentroidTempList=CentroidPos
-        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],[],False)
+        ClusterObject=Cluster(NumberOfClusters,CentroidTempList[0],CentroidTempList[1],[],True)
         ClusterList.append(ClusterObject)
         NumberOfClusters-=1
         CentroidTempList.clear()
@@ -160,9 +160,16 @@ def ReCalculateCentroids():
             clust.SetClusterPosY(TotalY/TotalInCluster)       
     return ClusterList 
 
+
+
+            
+
 def Reassign_Cluster(NumberOfCentroids):
-    ActiveMovement=0
     counter=0
+    check=0
+    UnchangedClusters=0
+    LocalStoredUnchangedDataFromClusters=[]
+    ListToStoreClusterId=[]
     CopyClusterList=[]
     CopyClusterList=deepcopy(ClusterList)
     
@@ -170,14 +177,27 @@ def Reassign_Cluster(NumberOfCentroids):
         clust.ObjList.clear()
         counter+=1
     if(counter>=NumberOfCentroids):
+        del clust
         AssignCasesToCentroids()
-        for clustObj in ClusterList:
-            for CopyCluster in CopyClusterList:
-                if(clustObj.ObjList==CopyCluster.ObjList):
-                    print("Hello")
-                else:
-                    print("NO!!!")    
-                
+        for clust in ClusterList:
+            check+=1
+            if(UnchangedClusters>0):
+                LocalStoredUnchangedDataFromClusters.append(UnchangedClusters)
+                UnchangedClusters=0 #reset
+            for copy_clust in CopyClusterList:
+                if((clust.clusterid==copy_clust.clusterid) and (clust.ObjList==copy_clust.ObjList)):
+                      UnchangedClusters+=1
+                      ListToStoreClusterId.append(int(clust.clusterid))
+    if(len(LocalStoredUnchangedDataFromClusters[0])>0 and len(ListToStoreClusterId[0])>0):  #Här är det meningen att den ska kolla och jämföra upprepningar, vilket kommer leta till att en ny centroid skapas och sen cases som läggs till, tänker göra det till funktioner för blir mycket upprepning i kod.  
+           for i in range(0,len(LocalStoredUnchangedDataFromClusters)):
+               print(i)
+                              
+  
+
+
+   
+    
+                    
 
     
     
@@ -199,7 +219,7 @@ def main():
     CreateClusters(N)
     AssignCasesToCentroids()
     print()
-    ReCalculateCentroids()
+    # ReCalculateCentroids()
     print()
     Reassign_Cluster(N)
 if __name__=='__main__':
