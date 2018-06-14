@@ -152,7 +152,8 @@ def AssignCasesToCentroids():
             
 def ReCalculateCentroids():
     helpercounter=0
-    
+    List=[]
+
     for clust in ClusterList:
         TotalX=0
         TotalY=0
@@ -168,7 +169,9 @@ def ReCalculateCentroids():
             clust.SetClusterPosX(TotalX/TotalInCluster)
             clust.SetClusterPosY(TotalY/TotalInCluster)       
             
-    CopyClusterList=deepcopy(ClusterList)   #Kanske tänka om här
+    List=deepcopy(ClusterList)   #Kanske tänka om här
+    for i in List:
+        CopyClusterList.append(i)
     for clust in ClusterList:   #Gör alla clusters listor tomma
         clust.ObjList.clear()
         helpercounter+=1
@@ -212,10 +215,9 @@ def ReCalculateCentroids():
 def Reassign_Cluster(NumberOfCentroids):
     CentroidActiveMovement=1
     var=0
-    
     var=int(counterList[0])
     counterList.clear()
-    ListToStoreClusterId=[]  
+    ListToStoreClusterId=[] 
     if(var>=NumberOfCentroids):
         AssignCasesToCentroids()
         for copyclust in CopyClusterList:
