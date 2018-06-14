@@ -21,12 +21,13 @@ CasesFromDatabaseList=[]
 QualityAndPriceFromCasesList=[]
 ClusterList=[]
 
-def ReadFile():
-   FileObj.Restaurants.CSV_ReadFile(FileObj.case_Db,"small")
+def CSV_ReadFile(self,filename):
 
-   for i in FileObj.case_Db:
-       CasesFromDatabaseList.append(i) 
-   return CasesFromDatabaseList
+    with open(filename + ".txt",'r') as csvfile:
+        FileReader = csv.reader(csvfile, delimiter=';', quotechar='|')
+        for rad in FileReader:
+            CasesFromDatabaseList.append(rad)   
+    csvfile.close()
 
 class Centroid(object):
     CentroidsPosition=[]    #tillför att lagra randomlagrade centroids
@@ -85,7 +86,8 @@ def InitialCentroidPosition(NumberOfCentroids):
 
 def ReadFileIntoCaseList():
 
-    ReadFile()
+    #ReadFile()
+   
     return CasesFromDatabaseList
 
 def CreateClusters(NumberOfClusters):
@@ -101,13 +103,13 @@ def CreateClusters(NumberOfClusters):
             break    
         else:
             continue
-            
     return ClusterList    
 
 
 
 def Distance(CentroidPosX=0,CentroidPosY=0,CasePosX=0,CaseposY=0):
 
+    
     return math.sqrt(math.pow((CentroidPosY-CaseposY),2) + math.pow((CentroidPosX-CasePosX),2))
 
 
@@ -122,14 +124,14 @@ def AssignCasesToCentroids():
         obj=[]
         obj=case
         for clust in ClusterList:
-            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
+            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj[3]),int(obj[4]))
             DistanceList.append(distance)
             DistanceList.sort()
             GuideLineDistance=DistanceList[0]
         for clust in ClusterList:
-            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
+            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj[3]),int(obj[4]))
             if(GuideLineDistance==distance):
-                #If sats som kollar ifall case redan existerar, då kan vi antigen ta bort det case från objList och ta den senaste caset och lägg in det i Listan
+                
                 clust.ObjList.append(case)
                 Cases_List.remove(case)
                 DistanceList.clear()
@@ -141,7 +143,7 @@ def AssignCasesToCentroids():
                
     return ClusterList            
                 
-             
+
             
 def ReCalculateCentroids():
 
@@ -153,55 +155,14 @@ def ReCalculateCentroids():
         for case in clust.ObjList:
             for diffcase in CasesFromDatabaseList:
                 if(case==diffcase):
-                    TotalX+=int(diffcase.get_price())
-                    TotalY+=int(diffcase.get_quality())
+                    TotalX+=int(diffcase[3])
+                    TotalY+=int(diffcase[4])
                     TotalInCluster+=1
         if(TotalInCluster>0):
             clust.SetClusterPosX(TotalX/TotalInCluster)
             clust.SetClusterPosY(TotalY/TotalInCluster)       
-            #Eventuellt att man kopierar ClusterList till en CopyList och clear interna listan, då kan man ändra om i Reassign funktionen
     return ClusterList 
 
-
-
-            
-
-def Reassign_Cluster(NumberOfCentroids):
-    counter=0
-    check=0
-    # UnchangedClusters=0
-    LocalStoredUnchangedDataFromClusters=[]
-    ListToStoreClusterId=[]
-    CopyClusterList=[]
-    CopyClusterList=deepcopy(ClusterList)
-    
-    for clust in ClusterList:   #Gör alla clusters listor tomma
-        clust.ObjList.clear()
-        counter+=1              #Hela denna sektionen är till för att ta bort alla cases från cluster interna listor
-    if(counter>=NumberOfCentroids): #Kollar ifall alla centroids/clusters gått igenom 
-        del clust
-        AssignCasesToCentroids()    #Assignar jag nya cases till dem nya centroids som är skapade
-        for clust in ClusterList:
-            check+=1
-            # if(UnchangedClusters>0):
-            #     LocalStoredUnchangedDataFromClusters.append(UnchangedClusters)
-            #     UnchangedClusters=0 #reset
-            for copy_clust in CopyClusterList:
-                if((clust.clusterid==copy_clust.clusterid) and (clust.ObjList==copy_clust.ObjList)):
-                    #   UnchangedClusters+=1
-                      ListToStoreClusterId.append(int(clust.clusterid))
-    if():  #Här är det meningen att den ska kolla och jämföra upprepningar, vilket kommer leta till att en ny centroid skapas och sen cases som läggs till, tänker göra det till funktioner för blir mycket upprepning i kod.  
-           
-                              
-  
-
-
-   
-    
-                    
-
-    
-    
 
 #Reassign cases
 #Perform K-means
@@ -214,14 +175,17 @@ def Reassign_Cluster(NumberOfCentroids):
 def main():
     N=3
     InitialCentroidPosition(N) #Klar
-    print()
-    ReadFileIntoCaseList()   #Klar
-    print()
+    print("------")
+    CSV_ReadFile(CasesFromDatabaseList,"small")   #Klar
+    print(CasesFromDatabaseList)
+    print("------")
     CreateClusters(N)
     AssignCasesToCentroids()
-    print()
+    print(ClusterList)
+    print("-------")
     ReCalculateCentroids()
-    print()
-    Reassign_Cluster(N)
+    AssignCasesToCentroids()
+    print(ClusterList)
+
 if __name__=='__main__':
     main()
