@@ -248,7 +248,7 @@ def K_means(K):
     while(CentroidActiveMovement != 0):
           Tostring()
           ReCalculateCentroids()
-          CentroidActiveMovement=Reassign_Cluster(K)
+          CentroidActiveMovement=Reassign_Cluster(K) #denna del inte klar
     
     return Tostring()
     
