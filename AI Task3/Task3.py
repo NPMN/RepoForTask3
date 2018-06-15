@@ -22,9 +22,10 @@ QualityAndPriceFromCasesList=[]
 ClusterList=[]
 CopyClusterList=[]
 counterList=[]
+CheckList=[]
 
 def ReadFile():
-   FileObj.Restaurants.CSV_ReadFile(FileObj.case_Db,"testDB")
+   FileObj.Restaurants.CSV_ReadFile(FileObj.case_Db,"big")
 
    for i in FileObj.case_Db:
        CasesFromDatabaseList.append(i) 
@@ -77,8 +78,8 @@ def InitialCentroidPosition(NumberOfCentroids):
                 print(i) 
             break
         else:
-            Centroid.x=randint(1,5)
-            Centroid.y=randint(1,5)
+            Centroid.x=randint(0,5)
+            Centroid.y=randint(0,5)
 
             PositionList=[Centroid.x,Centroid.y]
             Centroid.CentroidsPosition.append(PositionList)
@@ -181,40 +182,37 @@ def ReCalculateCentroids():
 
 def Reassign_Cluster(NumberOfCentroids):
     CentroidActiveMovement=1
-    CheckList=[]
-    Check=0
+    check=0
+    counter=0
     var=0
-    var2=0
     var=int(counterList[0])
     counterList.clear()
-    CopyClusterList=[] 
-    temp=[]
-    if(var>=NumberOfCentroids):
-        Check=CheckList[0]
-        AssignCasesToCentroids()
-        CopyClusterList=deepcopy(ClusterList)
-        if(Check != 0):
-            for c in ClusterList:
-                for cp in CopyClusterList:
-                    if(c==cp):
-                        c.Flag=False             
-                        temp.append(c.Flag)
-            for i in temp:
-                if(i==False):
-                    var2+=1
-            if(var2==len(temp)):
-                CentroidActiveMovement=0
-                Check=0        
-                            
 
-        elif (Check % 2 ==1):
-            CopyClusterList.clear()
-        else:  
-              
-            Check+=1
-            
-            CheckList.append(Check)
-              
+    CopyClusterList=[] 
+    TempList=[]
+    if(var>=NumberOfCentroids):
+        if(len(CheckList)>0):
+            counter=CheckList[0]
+            CheckList.clear()
+        else:
+            counter=0    
+        AssignCasesToCentroids()
+        
+        CopyClusterList=deepcopy(ClusterList)
+        if(counter>0):
+            TempList=deepcopy(CopyClusterList)
+            for i in CopyClusterList:
+                for j in TempList:
+                    if(i.clusterid==j.clusterid and i.ObjList == j.ObjList):
+                        check+=1
+                        
+        counter+=1
+       
+        if(check==len(CopyClusterList)):
+            CentroidActiveMovement=0
+
+        CheckList.append(counter)
+        #På något sätt när clusterna inte ändras, skicka CentroidActiveMovement=0 och uppgiften klart      
     return CentroidActiveMovement
 
 def Tostring():
@@ -231,11 +229,13 @@ def K_means(K):
     InitialCentroidPosition(K)  #Genereates random X and Y Position of Centroid
     CreateClusters(K)   #Creates Clusters with the position of Centroids
     AssignCasesToCentroids()
+    Tostring()
     while(CentroidActiveMovement != 0):
-          Tostring()
+          
           ReCalculateCentroids()
           CentroidActiveMovement=Reassign_Cluster(K) #denna del inte klar
-    
+          Tostring()
+    print("Clusters Finished")        
     return Tostring()
     
             
@@ -257,7 +257,7 @@ def K_means(K):
 
 def main():
     
-    K_means(3)
+    K_means(5)
     
 if __name__=='__main__':
     main()
