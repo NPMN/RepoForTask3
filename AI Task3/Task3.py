@@ -152,7 +152,7 @@ def AssignCasesToCentroids():
             
 def ReCalculateCentroids():
     helpercounter=0
-    List=[]
+
 
     for clust in ClusterList:
         TotalX=0
@@ -169,68 +169,52 @@ def ReCalculateCentroids():
             clust.SetClusterPosX(TotalX/TotalInCluster)
             clust.SetClusterPosY(TotalY/TotalInCluster)       
             
-    List=deepcopy(ClusterList)   #Kanske tänka om här
-    for i in List:
-        CopyClusterList.append(i)
+  
     for clust in ClusterList:   #Gör alla clusters listor tomma
         clust.ObjList.clear()
         helpercounter+=1
     counterList.append(helpercounter)    
-    return ClusterList,CopyClusterList,counterList
+    return ClusterList,counterList
 
 
 
-            
-'''
-# def Reassign_Cluster(NumberOfCentroids):
-#     counter=0
-#     checkIfIn=0
-
-#     ListToStoreClusterId=[]
-#     CopyClusterList=[]
-#     CopyClusterList=deepcopy(ClusterList)
-    
-#     for clust in ClusterList:   #Gör alla clusters listor tomma
-#         clust.ObjList.clear()
-#         counter+=1              #Hela denna sektionen är till för att ta bort alla cases från cluster interna listor
-#     if(counter>=NumberOfCentroids): #Kollar ifall alla centroids/clusters gått igenom 
-#         del clust
-#         AssignCasesToCentroids()    #Assignar jag nya cases till dem nya centroids som är skapade
-#         for clust in ClusterList:
-#             for copy_clust in CopyClusterList:
-#                 if((clust.clusterid==copy_clust.clusterid) and (clust.ObjList==copy_clust.ObjList)):
-#                       ListToStoreClusterId.append(int(clust.clusterid))
-#     for clust in ClusterList:  #Här är det meningen att den ska kolla och jämföra upprepningar, vilket kommer leta till att en ny centroid skapas och sen cases som läggs till, tänker göra det till funktioner för blir mycket upprepning i kod.  
-        
-#         if clust.clusterid in ListToStoreClusterId:
-#             checkIfIn+=1
-#             if(checkIfIn==len(ListToStoreClusterId)):
-#                 checkIfIn=0
-#                 return ClusterList
-#         elif clust.clusterid not in ListToStoreClusterId:
-#               ReCalculateCentroids()
-#               Reassign_Cluster(NumberOfCentroids)  
-'''         
 
 def Reassign_Cluster(NumberOfCentroids):
     CentroidActiveMovement=1
+    CheckList=[]
+    Check=0
     var=0
+    var2=0
     var=int(counterList[0])
     counterList.clear()
-    ListToStoreClusterId=[] 
+    CopyClusterList=[] 
+    temp=[]
     if(var>=NumberOfCentroids):
+        Check=CheckList[0]
         AssignCasesToCentroids()
-        for copyclust in CopyClusterList:
-            for clust in ClusterList:
-                if((copyclust.clusterid == clust.clusterid) and (copyclust.ObjList==clust.ObjList)):
-                    ListToStoreClusterId.append(clust.clusterid)
-    #if(len(ListToStoreClusterId)==NumberOfCentroids):
-    #inte klart här, men här ska den iallafall kolla efter ändringar mellan kopierade cluterlist oh clusterlist interna listor, kan ta hjälp med att lägga in clusterid i en lista och sen kolla om alla id som finns i clusterlist  existerar      
-        
-        # for ID in ListToStoreClusterId:
-        #     for clust in ClusterList: 
-    
-    
+        CopyClusterList=deepcopy(ClusterList)
+        if(Check != 0):
+            for c in ClusterList:
+                for cp in CopyClusterList:
+                    if(c==cp):
+                        c.Flag=False             
+                        temp.append(c.Flag)
+            for i in temp:
+                if(i==False):
+                    var2+=1
+            if(var2==len(temp)):
+                CentroidActiveMovement=0
+                Check=0        
+                            
+
+        elif (Check % 2 ==1):
+            CopyClusterList.clear()
+        else:  
+              
+            Check+=1
+            
+            CheckList.append(Check)
+              
     return CentroidActiveMovement
 
 def Tostring():
