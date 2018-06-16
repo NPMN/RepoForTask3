@@ -21,3 +21,8 @@ Meza;Traditional;Asian;4;5
 Zao_Street_Kitchen;Fastfood;Asian;3;5
 Pinchos;Gourmet;Swedish;5;5
 Karishma;Gourmet;Asian;4;4
+Kitchenette;Gourmet;Swedish;5;5
+Kosheli;Gourmet;Asian;3;4
+Ingeborgs;Traditional;Swedish;2;5
+Thai_Take_Away;Traditional;Asian;1;3
+Mikes_Food_Truck;Fastfood;Swedish;1;1

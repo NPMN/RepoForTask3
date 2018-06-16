@@ -199,7 +199,7 @@ def Reassign_Cluster(NumberOfCentroids):
         AssignCasesToCentroids()
         
         CopyClusterList=deepcopy(ClusterList)
-        if(counter>0):
+        if(counter !=0):
             TempList=deepcopy(CopyClusterList)
             for i in CopyClusterList:
                 for j in TempList:
@@ -210,14 +210,15 @@ def Reassign_Cluster(NumberOfCentroids):
        
         if(check==len(CopyClusterList)):
             CentroidActiveMovement=0
-
+        TempList.clear()
+        CopyClusterList.clear()
         CheckList.append(counter)
         #På något sätt när clusterna inte ändras, skicka CentroidActiveMovement=0 och uppgiften klart      
     return CentroidActiveMovement
 
 def Tostring():
     for clust in ClusterList:
-        print("\nClusterId: " + str(clust.clusterid) + "\tPositions " + "X=" + str(clust.PosX)+ " Y="+ str(clust.PosY)+"\n")
+        print("\nClusterId: " + str(clust.clusterid) + "\tPositions " + "X=" + str(clust.PosX)+ " Y="+ str(clust.PosY)+"\tCount: " + str(len(clust.ObjList))+"\n" )
         for obj in clust.ObjList:
             print("[ " +  str(obj) + " ]")
         print("\n")
@@ -234,6 +235,7 @@ def K_means(K):
           
           ReCalculateCentroids()
           CentroidActiveMovement=Reassign_Cluster(K) #denna del inte klar
+          print("--New cycle--\n")
           Tostring()
     print("Clusters Finished")        
     return Tostring()
@@ -257,7 +259,7 @@ def K_means(K):
 
 def main():
     
-    K_means(5)
+    K_means(3)
     
 if __name__=='__main__':
     main()
