@@ -198,13 +198,15 @@ def Reassign_Cluster(NumberOfCentroids):
             counter=0    
         AssignCasesToCentroids()
         
-        CopyClusterList=deepcopy(ClusterList)
+       
         if(counter !=0):
+            CopyClusterList=deepcopy(ClusterList)
             TempList=deepcopy(CopyClusterList)
             for i in CopyClusterList:
                 for j in TempList:
                     if(i.clusterid==j.clusterid and i.ObjList == j.ObjList):
                         check+=1
+                          
                         
         counter+=1
        
@@ -230,6 +232,7 @@ def K_means(K):
     InitialCentroidPosition(K)  #Genereates random X and Y Position of Centroid
     CreateClusters(K)   #Creates Clusters with the position of Centroids
     AssignCasesToCentroids()
+
     Tostring()
     while(CentroidActiveMovement != 0):
           
@@ -259,7 +262,7 @@ def K_means(K):
 
 def main():
     
-    K_means(3)
+    K_means(2)
     
 if __name__=='__main__':
     main()
