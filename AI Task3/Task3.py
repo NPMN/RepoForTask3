@@ -23,6 +23,7 @@ ClusterList=[]
 CopyClusterList=[]
 counterList=[]
 CheckList=[]
+OldClusterList=[]
 
 def ReadFile():
    FileObj.Restaurants.CSV_ReadFile(FileObj.case_Db,"big")
@@ -78,8 +79,10 @@ def InitialCentroidPosition(NumberOfCentroids):
                 print(i) 
             break
         else:
-            Centroid.x=randint(0,5)
-            Centroid.y=randint(0,5)
+            #Centroid.x=randint(0.0,5.0)
+            Centroid.x=random.uniform(0,5)
+            Centroid.y=random.uniform(0,5)
+            #Centroid.y=randint(0.0,5.0)
 
             PositionList=[Centroid.x,Centroid.y]
             Centroid.CentroidsPosition.append(PositionList)
@@ -128,13 +131,13 @@ def AssignCasesToCentroids():
         obj=[]
         obj=case
         for clust in ClusterList:
-            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
+            distance=Distance(float(clust.GetClusterPosX()),float(clust.GetClusterPosY()),float(obj.get_price()),float(obj.get_quality()))
             DistanceList.append(distance)
             DistanceList.sort()
             GuideLineDistance=DistanceList[0]
         for clust in ClusterList:
             distance=0
-            distance=Distance(int(clust.GetClusterPosX()),int(clust.GetClusterPosY()),int(obj.get_price()),int(obj.get_quality()))
+            distance=Distance(float(clust.GetClusterPosX()),float(clust.GetClusterPosY()),float(obj.get_price()),float(obj.get_quality()))
             if(GuideLineDistance==distance and case not in clust.ObjList):
                 #If sats som kollar ifall case redan existerar, då kan vi antigen ta bort det case från objList och ta den senaste caset och lägg in det i Listan
                 clust.ObjList.append(case)
@@ -153,9 +156,13 @@ def AssignCasesToCentroids():
             
 def ReCalculateCentroids():
     helpercounter=0
-
+    List=[]
+    List=deepcopy(ClusterList)
+    for cluster in List:
+       OldClusterList.append(cluster)
 
     for clust in ClusterList:
+        
         TotalX=0
         TotalY=0
         TotalInCluster=0
@@ -165,7 +172,7 @@ def ReCalculateCentroids():
                 if(case==diffcase):
                     TotalX+=int(diffcase.get_price())
                     TotalY+=int(diffcase.get_quality())
-                    TotalInCluster+=1
+                    TotalInCluster+=1                   
         if(TotalInCluster>0):
             clust.SetClusterPosX(TotalX/TotalInCluster)
             clust.SetClusterPosY(TotalY/TotalInCluster)       
@@ -175,7 +182,7 @@ def ReCalculateCentroids():
         clust.ObjList.clear()
         helpercounter+=1
     counterList.append(helpercounter)    
-    return ClusterList,counterList
+    return ClusterList,counterList,OldClusterList
 
 
 
@@ -183,37 +190,37 @@ def ReCalculateCentroids():
 def Reassign_Cluster(NumberOfCentroids):
     CentroidActiveMovement=1
     check=0
+    Flag=False
     counter=0
     var=0
     var=int(counterList[0])
     counterList.clear()
-
     CopyClusterList=[] 
-    TempList=[]
     if(var>=NumberOfCentroids):
         if(len(CheckList)>0):
             counter=CheckList[0]
             CheckList.clear()
         else:
             counter=0    
-        AssignCasesToCentroids()
+        AssignCasesToCentroids()    #Här får ClusterList nya cases
         
-       
-        if(counter !=0):
-            CopyClusterList=deepcopy(ClusterList)
-            TempList=deepcopy(CopyClusterList)
+        CopyClusterList=deepcopy(ClusterList)
+        for ex1 in OldClusterList:
+            for ex2 in CopyClusterList:
+                if(ex1.clusterid == ex2.clusterid and ex1.ObjList==ex2.ObjList):
+                    Flag=True
+        if(counter>=1 and Flag==True):
             for i in CopyClusterList:
-                for j in TempList:
+                for j in OldClusterList:
                     if(i.clusterid==j.clusterid and i.ObjList == j.ObjList):
-                        check+=1
-                          
-                        
+                        check+=1         
         counter+=1
-       
-        if(check==len(CopyClusterList)):
+        if(check>=len(CopyClusterList)):
             CentroidActiveMovement=0
-        TempList.clear()
+     
         CopyClusterList.clear()
+        OldClusterList.clear()
+        Flag=False
         CheckList.append(counter)
         #På något sätt när clusterna inte ändras, skicka CentroidActiveMovement=0 och uppgiften klart      
     return CentroidActiveMovement
@@ -228,18 +235,19 @@ def Tostring():
 
 def K_means(K):
     CentroidActiveMovement=1
+   
     ReadFileIntoCaseList()
     InitialCentroidPosition(K)  #Genereates random X and Y Position of Centroid
     CreateClusters(K)   #Creates Clusters with the position of Centroids
     AssignCasesToCentroids()
-
     Tostring()
     while(CentroidActiveMovement != 0):
-          
+         
           ReCalculateCentroids()
           CentroidActiveMovement=Reassign_Cluster(K) #denna del inte klar
           print("--New cycle--\n")
           Tostring()
+          
     print("Clusters Finished")        
     return Tostring()
     
