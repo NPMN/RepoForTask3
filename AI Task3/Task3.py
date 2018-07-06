@@ -270,7 +270,7 @@ def K_means(K):
 
 def main():
     
-    K_means(2)
+    K_means(4)
     
 if __name__=='__main__':
     main()
